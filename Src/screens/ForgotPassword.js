@@ -7,7 +7,7 @@ import Header from '../components/Header'
 import TextInput from '../components/TextInput'
 import Button from '../components/Button'
 import { emailValidator } from '../helpers/emailValidator'
-import {TouchableOpacity, View, StyleSheet } from 'react-native'
+import {TouchableOpacity, View, StyleSheet,Alert } from 'react-native'
 import axios from 'axios';
 import ResetPasswordscreen from '../screens/ResetPassword'
 import { passwordValidator } from '../helpers/passwordValidator'
@@ -40,12 +40,16 @@ export default function ForgotPasswordScreen({ navigation }) {
 
         
         })
-        .catch(function (error) {
-          console.log(error);
-        });
+        .catch(Error => {
+          // console.log(Error.response.status)
+          if(Error.response.status=="404"){
+            Alert.alert("Wrong Email ");
+          }
+
+        })
     
       // navigation.navigate('LoginScreen')
-  }
+  };
   
 
   

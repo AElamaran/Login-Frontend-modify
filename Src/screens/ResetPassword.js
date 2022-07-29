@@ -9,7 +9,7 @@ import TextInput from '../components/TextInput'
 import Button from '../components/Button'
 import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
-import { confirmpasswordValidator } from '../helpers/confirmpasswordValidator'
+
 import { TouchableOpacity, View, StyleSheet } from 'react-native'
 import axios from 'axios';
 
@@ -21,16 +21,31 @@ export default function ResetPasswordScreen({ navigation }) {
 
   const sendResetPasswordEmail = () => {
 
-    
+    function confirmpasswordValidator1(confirmpassword,password) 
+    {
+    if (!confirmpassword) return "Password can't be empty."
+    if (confirmpassword.length < 8) return 'Password ATLEAST 8 characters long.'
+    if(password!=confirmpassword) return "Confirm password not match with New password"
+    return ''
+    }
+
+    function Token(token) 
+    {
+    if (!token) return "Token can't be empty."
+  
+    return ''
+    }
 
 
     const emailError = emailValidator(email.value)
     const passwordError=passwordValidator(password.value)
-    const confirmpasswordError=confirmpasswordValidator(confirmpassword.value)
+    const confirmpasswordError=confirmpasswordValidator1(confirmpassword.value,password.value)
+    const tokenError=Token(token.value)
      if (emailError || passwordError||confirmpasswordError) {
       setEmail({ ...email, error: emailError })
       setPassword({ ...password, error: passwordError })
       setConfirmpassword({ ...confirmpassword, error: confirmpasswordError })
+      setToken({ ...token, error: tokenError })
       console.log('email or password or confirmpassword error ');
 
       return;
@@ -42,16 +57,35 @@ export default function ResetPasswordScreen({ navigation }) {
 
     
       axios
-        .post('http://192.168.43.71:8000/api/reset-password',{email: email.value,token: token.value,password: password.value,confirm_password: confirmpassword.value})
+        .post('http://192.168.43.71:8000/api/reset-password',{email: email.value,token: token.value,password: password.value,password_confirmation: confirmpassword.value})
         .then(response => {
+
+          if (response.status == 20) {
+            console.log("correct")
+          } else {
+            console.log("failed");
+          }
+
+          console.log(response.status);
+        setsendResetPasswordEmail(response.data);
+
           console.log("Hello how are you");
           console.log(response.data);
-          
-           navigation.navigate('LoginScreen')
+          navigation.navigate('LoginScreen');
+        
         })
         .catch(function (error) {
           console.log(error);
-        });
+          
+        })
+
+        .catch(Error => {
+          console.log(Error.response.data.response)
+          if(Error.response.data.response=="We can't find a user with that email address."){
+            Alert.alert("Wrong Email");
+          }
+          
+        })
     
   }
   

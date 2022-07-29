@@ -40,7 +40,7 @@ export default function App() {
             name="Driver"
             component={Driver}
           />
-         
+        
         </Stack.Navigator>
       </NavigationContainer>
     // </Provider>
